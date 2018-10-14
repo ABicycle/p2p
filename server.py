@@ -3,7 +3,6 @@ from thread import *
 import random
 import sqlite3
 
-
 host = ''
 port = 10000
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -18,7 +17,6 @@ except socket.error as e:
 s.listen(5)
 print ("listening on port:",s.getsockname()[1])
 
-
 def db_up_del(op,id,username=""):
 	conn = sqlite3.connect('users.db')
 	c = conn.cursor()
@@ -29,14 +27,12 @@ def db_up_del(op,id,username=""):
 	conn.commit()
 	conn.close()
 
-
 def db_list():
 	conn = sqlite3.connect('users.db')
 	c = conn.cursor()
 	c.execute("SELECT * FROM users")
 	return(c.fetchall())
 	conn.close()
-
 
 def client_thread(conn,id):
 	conn.send('connected...\nenter a username: ')
@@ -49,11 +45,9 @@ def client_thread(conn,id):
 				username = data
 				db_up_del('add',id,username)
 				conn.send("updated\n")
-			f=1
-			
+			f=1	
 		if data == 'list':
-			conn.send(str(db_list())+"\n")
-				
+			conn.send(str(db_list())+"\n")	
 		if not data:
 			connections.pop(id)
 			db_up_del('del',id)
