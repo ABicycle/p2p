@@ -6,6 +6,18 @@ import sqlite3
 def db_up_del(op,id,username=""):
 	conn = sqlite3.connect('users.db')
 	c = conn.cursor()
+	
+	c.execute("SELECT name FROM sqlite_master WHERE type='table';")
+	r = []
+	for i in c.fetchall():
+		r.append(i[0])
+	if "users" not in r:
+		c.execute("""CREATE TABLE users (
+			id integer,
+			username text
+			)""")
+		conn.commit()
+	
 	if op == 'add':
 		c.execute("INSERT INTO users (id, username) values (?, ?)",(id, username))
 	elif op == 'del':
@@ -49,7 +61,7 @@ async def client_thread(conn, id, loop):
 	(username,f) = ('',0)
 	while True:
 		data = await loop.sock_recv(conn, 1024)
-		data=data.decode('utf-8')
+		data=data.decode('utf-8').rstrip("\n\r")
 		if f==0: 
 			if data != '':
 				print(data)
